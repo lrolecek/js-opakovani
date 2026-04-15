@@ -1,0 +1,14 @@
+body {
+  font-family: sans-serif;
+  margin: 40px;
+}
+.karta {
+  width: 250px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+.zvyrazneno {
+  border: 3px solid orange;
+  font-weight: bold;
+}

@@ -1,0 +1,8 @@
+body {
+  font-family: sans-serif;
+  max-width: 600px;
+  margin: 40px auto;
+}
+li {
+  padding: 4px 0;
+}

@@ -1,0 +1,19 @@
+body {
+  font-family: sans-serif;
+  max-width: 600px;
+  margin: 40px auto;
+}
+input {
+  padding: 6px;
+  font-size: 16px;
+}
+button {
+  padding: 6px 14px;
+  cursor: pointer;
+  margin-left: 4px;
+}
+#zprava {
+  margin-top: 20px;
+  font-size: 18px;
+  color: darkgreen;
+}
