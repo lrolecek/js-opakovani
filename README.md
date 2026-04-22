@@ -257,7 +257,64 @@ console.log(data.jmeno);
 
 ---
 
-## 9. Drag & Drop – základy
+## 9. Cookies – základy
+
+Cookies jsou malé textové záznamy uložené v prohlížeči. Na rozdíl od `localStorage` se **odesílají na server** s každým HTTP požadavkem a lze jim nastavit **dobu platnosti**.
+
+### Zápis cookie
+```js
+// jednoduchá cookie (zmizí po zavření prohlížeče)
+document.cookie = "jmeno=Petr";
+
+// cookie s dobou platnosti (7 dní)
+const dny = 7;
+const datum = new Date();
+datum.setTime(datum.getTime() + dny * 24 * 60 * 60 * 1000);
+document.cookie = "jmeno=Petr; expires=" + datum.toUTCString() + "; path=/";
+```
+
+> **Pozor:** `document.cookie = ...` nepřepisuje všechny cookies – přidává/aktualizuje jen tu konkrétní.
+
+### Čtení cookies
+
+`document.cookie` vrací **jeden dlouhý řetězec** se všemi cookies:
+
+```js
+console.log(document.cookie);
+// "jmeno=Petr; barva=modra; vek=20"
+```
+
+Pomocná funkce pro získání jedné hodnoty:
+```js
+function getCookie(nazev) {
+  const cookies = document.cookie.split("; ");
+  for (const cookie of cookies) {
+    const [klic, hodnota] = cookie.split("=");
+    if (klic === nazev) return hodnota;
+  }
+  return null;
+}
+
+console.log(getCookie("jmeno")); // "Petr"
+```
+
+### Smazání cookie
+
+Cookie se smaže nastavením `expires` do minulosti:
+```js
+document.cookie = "jmeno=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
+```
+
+### Cookies vs. localStorage
+| | Cookies | localStorage |
+|---|---|---|
+| Kapacita | cca 4 KB | cca 5 MB |
+| Odesílá se na server | ano | ne |
+| Platnost | nastavitelná (expires) | trvalá (dokud se nesmaže) |
+
+---
+
+## 10. Drag & Drop – základy
 
 Funguje na principu událostí. Prvek, který chceme **táhnout**, musí mít atribut `draggable="true"`.
 
@@ -305,12 +362,74 @@ cil.addEventListener("drop", (event) => {
 
 ---
 
-## Bonus – propojení JS se stránkou
+## 11. Fetch – načítání dat ze serveru
 
-V HTML se skript načítá nejlépe takto (na konci `<body>` nebo s `defer`):
+`fetch` slouží k odesílání HTTP požadavků (typicky na API). Vrací **Promise** – výsledek, který bude k dispozici až v budoucnu.
 
-```html
-<script src="script.js" defer></script>
+### Varianta 1 – Promise (`.then`)
+
+```js
+fetch("https://jsonplaceholder.typicode.com/users/1")
+  .then((response) => {
+    if (!response.ok) {
+      throw new Error("Chyba: " + response.status);
+    }
+    return response.json(); // převede tělo odpovědi na JS objekt
+  })
+  .then((data) => {
+    console.log(data.name);  // "Leanne Graham"
+    console.log(data.email); // "Sincere@april.biz"
+  })
+  .catch((error) => {
+    console.error("Něco se pokazilo:", error);
+  });
 ```
 
-`defer` zajistí, že se skript spustí **až po načtení DOM** – jinak by `querySelector` nic nenašel.
+**Jak to číst:** Zavolej `fetch` → **pak** (`.then`) zpracuj odpověď → **pak** pracuj s daty → **kdyby se cokoliv pokazilo** (`.catch`), vypiš chybu.
+
+### Varianta 2 – `async` / `await`
+
+Totéž, ale čitelnějším zápisem:
+
+```js
+async function nactiUzivatele() {
+  try {
+    const response = await fetch("https://jsonplaceholder.typicode.com/users/1");
+
+    if (!response.ok) {
+      throw new Error("Chyba: " + response.status);
+    }
+
+    const data = await response.json();
+    console.log(data.name);
+    console.log(data.email);
+  } catch (error) {
+    console.error("Něco se pokazilo:", error);
+  }
+}
+
+nactiUzivatele();
+```
+
+> `await` říká: „počkej, až se tohle dokončí, a teprve pak pokračuj na další řádek". Funguje **jen uvnitř funkce označené jako `async`**.
+
+### Výpis dat do stránky – typický vzor
+
+```js
+async function zobrazUzivatele() {
+  const response = await fetch("https://jsonplaceholder.typicode.com/users");
+  const uzivatele = await response.json();
+
+  const seznam = document.querySelector("#seznam");
+
+  uzivatele.forEach((uzivatel) => {
+    const li = document.createElement("li");
+    li.textContent = uzivatel.name;
+    seznam.appendChild(li);
+  });
+}
+
+zobrazUzivatele();
+```
+
+> Toto je kombinace **fetch + createElement + appendChild** – propojení více naučených témat dohromady.

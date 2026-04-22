@@ -1,0 +1,33 @@
+body {
+  font-family: sans-serif;
+  max-width: 600px;
+  margin: 40px auto;
+}
+.karta {
+  padding: 12px;
+  margin-bottom: 8px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fafafa;
+}
+.karta strong {
+  display: block;
+  margin-bottom: 4px;
+}
+.karta span {
+  color: #555;
+  font-size: 14px;
+}
+button {
+  padding: 8px 16px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+#stav {
+  color: #888;
+  font-style: italic;
+}
+li {
+  padding: 4px 0;
+}
